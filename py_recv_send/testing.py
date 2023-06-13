@@ -23,5 +23,6 @@ def sim():
 
 sim()
         
-        
-        
+def com():
+    # TODO
+    pass
