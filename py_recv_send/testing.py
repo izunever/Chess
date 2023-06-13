@@ -4,6 +4,7 @@ from test_data import inp_groups
 
 def sim():
     for (res, inp) in inp_groups.items():
+        print(f"\nTEST: {res[0]}")
         chessboard = BlindBoard()
         print(chessboard.chessboard)
         inp_provider = InputProvider(init_mask=inp[0])
@@ -14,10 +15,12 @@ def sim():
             print(inp_provider.state)
             if probe:
                 print(probe)
-                chessboard.make_move(probe)
+                result = chessboard.make_move(probe)
                 print(chessboard.chessboard)
             else:
                 print("Move not ready")
+        assert(result == res[1])
+
 sim()
         
         

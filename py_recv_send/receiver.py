@@ -6,7 +6,7 @@ from common import *
 
 def map_cols(idx): return "abcdefgh"[idx]
 def map_tuples(t1: Tuple[int, int], t2: Tuple[int, int]) -> str: 
-    return map_cols(t1[1]) + str(t1[0]) +  map_cols(t2[1]) + str(t2[0])
+    return map_cols(7 - t1[1]) + str(8 - t1[0]) +  map_cols(7 - t2[1]) + str(8 - t2[0])
 
 class RecieverState(enum.Enum):
     MoveOwnerPiece = 0
