@@ -1,75 +1,65 @@
 import chess
-from typing import List
+from typing import List, Tuple
 import enum
+from common import *
 # or work with hardware
 
-def maskstart() -> List[List[bool]]:
-    return [
-        [True for _ in range(8)],
-        [True for _ in range(8)],
-        [False for _ in range(8)],
-        [False for _ in range(8)],
-        [False for _ in range(8)],
-        [False for _ in range(8)],
-        [True for _ in range(8)],
-        [True for _ in range(8)],
-    ]
-print(maskstart())
-
 def map_cols(idx): return "abcdefgh"[idx]
+def map_tuples(t1: Tuple[int, int], t2: Tuple[int, int]) -> str: 
+    return map_cols(t1[1]) + str(t1[0]) +  map_cols(t2[1]) + str(t2[0])
 
 class RecieverState(enum.Enum):
-    First = 0
-    Second = 1
-    Third = 2
+    MoveOwnerPiece = 0
+    TargetSquare = 1
+    Capture = 2
+    Done = 3
 
 class InputProvider():
-    def __init__(self):
-        self.state = RecieverState.First
-        self.mask1 = maskstart
-        self.mask2 = None
-        self.part1 = ""
-        self.part2 = ""
+    def __init__(self, init_mask=maskstart()):
+        self.state = RecieverState.MoveOwnerPiece
+        self.curr_mask = init_mask # stan maski ktora jest teraz
+        self.recv_mask = None # maska otrzymywana
+        self.origin: Tuple[int, int] | None = (0, 0)
+        self.target: Tuple[int, int] | None = (0, 0)
         self.move: str | None = None
 
-    def receive_move(self, move: List[List[bool]] | None):
-        if move == None:
+    def receive_mask(self, mask_received: List[List[bool]] | None):
+        if mask_received == None:
             return
-        self.mask2 = move
+        self.recv_mask = mask_received
         self.compute_state()
-        self.mask1 = self.mask2
+        self.curr_mask = self.recv_mask
 
     def compute_state(self):
-        if self.mask1 == None or self.mask2 == None:
+        if self.curr_mask == None or self.recv_mask == None:
             return
         for i in range(8):
             for j in range(8):
-                if self.mask1[i][j] != self.mask2[i][j]:
-                    if self.state == RecieverState.First:
-                        self.part1 = map_cols(j) + str(i)
-                        self.state == RecieverState.Second
-
-                    if self.state == RecieverState.Second:
-                        self.part2 = map_cols(j) + str(i)
-                        to_i = i
-                        to_j = j
-                        self.state = RecieverState.Third
-
-                    if self.state == RecieverState.Third:
-                        if i == to_i and j == to_j:
-                            self.move = self.part1 + self.part2
-                            self.state = RecieverState.First
-                        raise Exception
+                if self.curr_mask[i][j] != self.recv_mask[i][j]:
+                    match self.state:
+                        case RecieverState.MoveOwnerPiece:
+                            self.origin = (i, j)
+                            self.state = RecieverState.TargetSquare
+                        case RecieverState.TargetSquare:
+                            if self.curr_mask[i][j] - self.recv_mask[i][j] == 1:
+                                self.target = (i, j)
+                                self.state = RecieverState.Capture
+                            else:
+                                self.target = (i, j)
+                                self.move = map_tuples(self.origin, self.target)
+                                self.state = RecieverState.Done
+                                self.origin, self.target = None, None
+                        case RecieverState.Capture:
+                            if i == self.target[0] and j == self.target[1]:
+                                self.move = map_tuples(self.origin, self.target)
+                                self.state = RecieverState.Done
+                                self.origin, self.target = None, None                    
                     
     def consume(self) -> str | None:
-        if self.move:
+        if self.state == RecieverState.Done:
             move = self.move
             self.move = None
+            self.state = RecieverState.MoveOwnerPiece
             return move
         else:
             return None
-
-
-
-
-        
