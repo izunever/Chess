@@ -35,14 +35,11 @@ class LichessAPI:
         if self.game != None:
             print("Error: the game is already being played")
         self.challenge = self.client.challenges.create_ai(**basic_game_args)
-        print("challenge: ")
-        pp.pprint(self.challenge)
         self.gameId: str = self.challenge["id"]
         self.game = self.client.board.stream_game_state(self.gameId)
 
     def poll_game(self):
         ev = self.game.__next__()
-        pp.pprint(ev)
         return ev
     
     def make_move(self, move: str): self.client.board.make_move(self.gameId, move)
