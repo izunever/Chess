@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-import berserk
 import chess
-import flask
 import receiver
-API_TOKEN = "lip_4EBtAZbxUPQWmizc7JOJ"
-
 
 class BlindBoard:
     def __init__(self, starting_fen=chess.STARTING_BOARD_FEN):
