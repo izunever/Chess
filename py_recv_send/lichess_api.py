@@ -43,22 +43,3 @@ class LichessAPI:
         return ev
     
     def make_move(self, move: str): self.client.board.make_move(self.gameId, move)
-        
-
-if __name__ == "__main__":
-    lapi = LichessAPI()
-    lapi.start_game_ai()
-    lapi.get_ongoing()
-
-    while True:
-        inp = input("provide action: ")
-        if inp == "exit":
-            break;
-        elif inp == "poll":
-            ev = lapi.poll_game()
-        else:
-            lapi.make_move(inp)
-                    
-
-    lapi.__clean_conn__()
-    lapi.get_ongoing()
