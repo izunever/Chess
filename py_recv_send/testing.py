@@ -42,22 +42,21 @@ def api():
             inp = input("(check / (move) / exit): ")
             if inp == "exit":
                 break
-            elif inp == "check":
-                sleep(0.5) 
-                event = lapi.poll_game()
-                pp.pprint(event)
-                if "moves" in event.keys():
-                    enemy = event["moves"].split(' ')[-1]
-                else:
-                    enemy = event["state"]["moves"].split(' ')[-1]
-                chessboard.make_move(enemy)
-                print(chessboard.chessboard)
-            elif chessboard.make_move(inp):
+            try:
+                chessboard.chessboard.parse_uci(inp)
+            except ValueError:
+                print("The input move has to be in the uci format (ex: \"a2a3\")")
+                continue
+            if chessboard.make_move(inp):
                 lapi.make_move(inp)
-                print(chessboard.chessboard)
+                print(chessboard.chessboard, "\n")
             else:
                 print("Invalid input")
-
+                continue
+            print("Waiting for the ai move ...")
+            ai_move = lapi.poll_wait(inp)
+            chessboard.make_move(ai_move)
+            print(chessboard.chessboard, "\n")
         except Exception as e:
             print(e)
     lapi.__clean_conn__()
