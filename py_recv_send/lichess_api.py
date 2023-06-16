@@ -5,8 +5,8 @@ import pprint
 from typing import Any, Dict, Optional
 from time import sleep
 pp = pprint.PrettyPrinter(indent=4)
-# API_TOKEN = "lip_jzyyR1VEjZVfzhAfaSYW" # BOT TOKEN
-API_TOKEN = "lip_8qGOeZUYogvePPTjKCCX" # my token pls dont steal :^)
+# API_TOKEN = "" # BOT TOKEN
+API_TOKEN = "" # my token pls dont steal :^)
 
 
 basic_game_args = {
